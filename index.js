@@ -3,6 +3,7 @@
 
 // init project
 var express = require('express');
+const dayjs = require('dayjs');
 var app = express();
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
@@ -24,6 +25,25 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api/",function (req, res) {
+  res.json({ unix: Date.now(), utc: new Date().toUTCString() });
+})
+
+
+app.get("/api/:date",function (req, res) {
+    var dateString = req.params.date
+    var date
+    if(!isNaN(dateString)){
+      date = new Date(parseInt(dateString))
+    }else{
+      date = new Date(dateString)
+    }
+    if(dayjs(date).isValid()){
+      res.json({ unix: date.getTime(), utc: date.toUTCString() })
+    }else{
+      res.json({ error: "Invalid Date" })
+    }
+})
 
 
 // Listen on port set in environment variable or default to 3000
